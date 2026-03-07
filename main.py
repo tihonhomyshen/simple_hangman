@@ -1,7 +1,13 @@
 import random
+from colorama import init, Fore, Back, Style
+from consts import MAX_ATTEMPTS
 
+init()
 
 def choose_word() -> str:
+    """
+    Выбирает случайное слово из файла и возвращает его
+    """
     words = []
     with open("words.txt", "r", encoding="UTF-8") as file:
         for line in file:
@@ -10,23 +16,41 @@ def choose_word() -> str:
     return word
 
 
-def output_stat(word_state: list[str], used: list[str],
-                bad_symbols: list[str], attempts: int) -> None:
+def output_stat(
+    word_state: list[str],
+    used: list[str],
+    bad_symbols: list[str],
+    attempts: int,
+) -> None:
+    """
+    Выводит статистику: состояние слова, использованные буквы,
+     буквы которых нет в слове, кол-во попыток.
+    """
     print(*word_state)
-    print("Использованные буквы:", *used)
-    print("Буквы, которых нет в слове:", *bad_symbols)
-    print("Осталось попыток:", 6 - attempts)
+    print("Использованные буквы:",  *used)
+
+    print(Fore.RED + "Буквы, которых нет в слове:", *bad_symbols)
+    print(Fore.MAGENTA + "Осталось попыток:", 6 - attempts)
+    print(Style.RESET_ALL, end='')
 
 
-def handle_input(user_input : str) -> bool:
-    if (('а' <= user_input <= 'я' or 'А' <= user_input <= 'Я')
-            and len(user_input) == 1):
+def handle_input(user_input: str) -> bool:
+    """
+    Валидация пользовательской ввода, возвращает ОК - если
+     введена одна буква русского алфавита.
+    """
+    if ("а" <= user_input <= "я" or "А" <= user_input <= "Я") and len(
+        user_input
+    ) == 1:
         return True
     print("Некорректный ввод. Введите ещё раз")
     return False
 
 
 def draw_hangman(attempt: int):
+    """
+    Отрисовка виселицы взависимости от попытки
+    """
     hangman = [
         """
          +---+
@@ -90,12 +114,15 @@ def draw_hangman(attempt: int):
         / \\  |
              |
         =========
-        """
+        """,
     ]
     print(hangman[attempt])
 
 
-def init_game() -> None:
+def game() -> None:
+    """
+    Основной функционал игры
+    """
     word = choose_word()
     word_state = ["_" for _ in range(len(word))]
     used_symbols = []
@@ -103,11 +130,10 @@ def init_game() -> None:
     try_cnt = 0
     guessed_cnt = 0
     output_stat(word_state, used_symbols, bad_symbols, try_cnt)
-    while try_cnt < 6:
-        user_input = input()
+    while not game_over(guessed_cnt, try_cnt, word):
+        user_input = input().lower()
         changed = 0
         if handle_input(user_input):
-            user_input = user_input.lower()
             if user_input in used_symbols:
                 print("Уже была использована, введите ещё раз")
             else:
@@ -122,20 +148,19 @@ def init_game() -> None:
                 used_symbols.append(user_input)
                 output_stat(word_state, used_symbols, bad_symbols, try_cnt)
         guessed_cnt += changed
-        if guessed_cnt == len(word):
-            win(word)
-            break
-        if try_cnt == 6:
-            lose(word)
-            break
 
 
-def win(word) -> None:
-    print(f"Победа! Загаданное слово: {word}")
+def game_over(guessed_cnt: int, try_cnt: int, word: str) -> bool:
+    """
+    Проверка на окончание игры
+    """
+    if guessed_cnt == len(word):
+        print("Победа! Загаданное слово " + Fore.CYAN + Style.BRIGHT + word + Style.RESET_ALL)
+        return True
+    if try_cnt == MAX_ATTEMPTS:
+        print("Поражение! Загаданное слово " + Fore.CYAN + Style.BRIGHT + word + Style.RESET_ALL)
+        return True
+    return False
 
 
-def lose(word) -> None:
-    print(f"Поражение! Загаданное слово: {word}")
-
-
-init_game()
+game()
