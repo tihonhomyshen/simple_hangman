@@ -1,8 +1,11 @@
 import random
-from colorama import init, Fore, Back, Style
+
+from colorama import Fore, Style, init
+
 from consts import MAX_ATTEMPTS
 
 init()
+
 
 def choose_word() -> str:
     """
@@ -27,11 +30,10 @@ def output_stat(
      буквы которых нет в слове, кол-во попыток.
     """
     print(*word_state)
-    print("Использованные буквы:",  *used)
-
+    print("Использованные буквы:", *used)
     print(Fore.RED + "Буквы, которых нет в слове:", *bad_symbols)
     print(Fore.MAGENTA + "Осталось попыток:", 6 - attempts)
-    print(Style.RESET_ALL, end='')
+    print(Style.RESET_ALL, end="")
 
 
 def handle_input(user_input: str) -> bool:
@@ -47,7 +49,7 @@ def handle_input(user_input: str) -> bool:
     return False
 
 
-def draw_hangman(attempt: int):
+def draw_hangman(attempt: int) -> None:
     """
     Отрисовка виселицы взависимости от попытки
     """
@@ -155,10 +157,22 @@ def game_over(guessed_cnt: int, try_cnt: int, word: str) -> bool:
     Проверка на окончание игры
     """
     if guessed_cnt == len(word):
-        print("Победа! Загаданное слово " + Fore.CYAN + Style.BRIGHT + word + Style.RESET_ALL)
+        print(
+            "Победа! Загаданное слово "
+            + Fore.CYAN
+            + Style.BRIGHT
+            + word
+            + Style.RESET_ALL
+        )
         return True
     if try_cnt == MAX_ATTEMPTS:
-        print("Поражение! Загаданное слово " + Fore.CYAN + Style.BRIGHT + word + Style.RESET_ALL)
+        print(
+            "Поражение! Загаданное слово "
+            + Fore.CYAN
+            + Style.BRIGHT
+            + word
+            + Style.RESET_ALL
+        )
         return True
     return False
 
