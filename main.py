@@ -38,7 +38,7 @@ def output_stat(
 
 def handle_input(user_input: str) -> bool:
     """
-    Валидация пользовательской ввода, возвращает ОК - если
+    Валидация пользовательского ввода, возвращает ОК - если
      введена одна буква русского алфавита.
     """
     if ("а" <= user_input <= "я" or "А" <= user_input <= "Я") and len(
@@ -47,78 +47,6 @@ def handle_input(user_input: str) -> bool:
         return True
     print("Некорректный ввод. Введите ещё раз")
     return False
-
-
-def draw_hangman(attempt: int) -> None:
-    """
-    Отрисовка виселицы взависимости от попытки
-    """
-    hangman = [
-        """
-         +---+
-         |   |
-             |
-             |
-             |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-             |
-             |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-         |   |
-             |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-        /|   |
-             |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-        /|\\  |
-             |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-        /|\\  |
-        /    |
-             |
-        =========
-        """,
-        """
-         +---+
-         |   |
-         O   |
-        /|\\  |
-        / \\  |
-             |
-        =========
-        """,
-    ]
-    print(hangman[attempt])
 
 
 def game() -> None:
@@ -146,7 +74,6 @@ def game() -> None:
                 if changed == 0:
                     try_cnt += 1
                     bad_symbols.append(user_input)
-                    draw_hangman(try_cnt)
                 used_symbols.append(user_input)
                 output_stat(word_state, used_symbols, bad_symbols, try_cnt)
         guessed_cnt += changed
